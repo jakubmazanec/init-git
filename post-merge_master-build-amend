@@ -1,0 +1,20 @@
+#!/bin/sh
+echo "Executing post-merge hook..."
+
+deployment_branch='master'
+current_branch=$(git symbolic-ref --short HEAD)
+
+if [ $current_branch = $deployment_branch ]; then
+	echo "Running build task..."
+	npm run build -- --production
+
+	echo "Amending to the previous commit..."
+	git add -u
+	git commit --amend --no-edit
+
+	exit 0
+else
+	echo "Skipping build task..."
+	
+	exit 1
+fi
